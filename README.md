@@ -58,3 +58,14 @@ API Endpoints:
 6. Delete User --> DELETE --> http://localhost:5000/api/users/delete/:id
 7. Get Recent Users --> GET --> http://localhost:5000/api/users/recent
 8. Get Analytics Summary --> GET --> http://localhost:5000/api/analytics/summary
+
+ScreenShorts
+
+1.Login Page
+<img src="https://res.cloudinary.com/djha4r2ys/image/upload/v1774632659/Screenshot_2026-03-27_225929_lpvitw.png">
+
+2. Dashboard Page
+<img src="https://res.cloudinary.com/djha4r2ys/image/upload/v1774632764/Screenshot_2026-03-27_230151_jecprv.png">
+
+3. Users Page
+<img src-"https://res.cloudinary.com/djha4r2ys/image/upload/v1774632851/users_nlmyeg.png">

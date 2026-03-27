@@ -1,0 +1,77 @@
+<div id="login">
+
+      <div id="left">
+
+            <div class="logo">
+                  <img
+                        src="https://play-lh.googleusercontent.com/fYq5G6Ll2LUGGqb1FUUmijn2uBNZR7L1LaPl0cywWxu1azZz25x-njfMZKe0hATrANg">
+                  <p>SmartWinnr <strong style="color:#F97316">CRM</strong></p>
+            </div>
+
+            <h2>Welcome Back <i class="fa-solid fa-hand-wave" style="color: var(--orange);"></i></h2>
+            <p id="center">Please enter your credentials to continue</p>
+
+            <form [formGroup]="myform" (ngSubmit)="loginsubmit()" class="login-form">
+
+                  <div class="forminput">
+                        <label>Email Address</label>
+                        <input type="email" formControlName="email" placeholder="Enter your email">
+                  </div>
+
+                  <div class="forminput">
+                        <label>Password</label>
+                        <input type="password" formControlName="password" placeholder="Enter your password">
+                  </div>
+
+                  <button type="submit" class="submit-btn" [disabled]="myform.invalid">
+                        Sign In
+                  </button>
+
+            </form>
+
+      </div>
+      <div id="right">
+            <div class="right-content">
+
+                  <!-- Brand heading -->
+                  <div class="brand-text">
+                        <span class="badge">CRM Platform</span>
+                        <h1>Drive Sales.<br/>Track Teams.<br/>Win More.</h1>
+                        <p>The all-in-one platform built for high-performance sales teams.</p>
+                  </div>
+
+                  <!-- 3 Stats Row -->
+                  <div class="stats-strip">
+                        <div class="stat">
+                              <span class="stat-num">1.2K</span>
+                              <span class="stat-label">Active Users</span>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat">
+                              <span class="stat-num">₹94L</span>
+                              <span class="stat-label">Sales Tracked</span>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat">
+                              <span class="stat-num">98%</span>
+                              <span class="stat-label">Uptime</span>
+                        </div>
+                  </div>
+
+                  <!-- CSS Bar Chart -->
+                  <div class="chart-box">
+                        <p class="chart-title">Monthly Performance</p>
+                        <div class="bars">
+                              <div class="bar-wrap"><div class="bar" style="height:55%"></div><span>Jan</span></div>
+                              <div class="bar-wrap"><div class="bar" style="height:70%"></div><span>Feb</span></div>
+                              <div class="bar-wrap"><div class="bar" style="height:45%"></div><span>Mar</span></div>
+                              <div class="bar-wrap"><div class="bar" style="height:90%"></div><span>Apr</span></div>
+                              <div class="bar-wrap"><div class="bar" style="height:65%"></div><span>May</span></div>
+                              <div class="bar-wrap"><div class="bar accent" style="height:100%"></div><span>Jun</span></div>
+                        </div>
+                  </div>
+
+            </div>
+      </div>
+
+</div>
