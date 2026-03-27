@@ -69,3 +69,6 @@ ScreenShorts
 
 3. Users Page
 <img src="https://res.cloudinary.com/djha4r2ys/image/upload/v1774632851/users_nlmyeg.png">
+
+4. Analysis Page
+<img src="https://res.cloudinary.com/djha4r2ys/image/upload/v1774633521/analysis_j6ngqe.png">
