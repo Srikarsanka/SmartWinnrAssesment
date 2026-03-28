@@ -44,6 +44,14 @@ export class Dashboards implements OnInit, AfterViewInit {
   statActive: number | string = '...';
   statInactive: number | string = '...';
 
+  // Sales Module
+  salesList: any[] = [];
+  isAddSaleModalOpen = false;
+  isEditSaleModalOpen = false;
+  selectedSale: any = null;
+  addSaleForm: FormGroup;
+  editSaleForm: FormGroup;
+
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private fb: FormBuilder,
@@ -64,6 +72,19 @@ export class Dashboards implements OnInit, AfterViewInit {
     this.editUserForm = this.fb.group({
       role: ['Viewer', Validators.required],
       isActive: [true, Validators.required]
+    });
+
+    this.addSaleForm = this.fb.group({
+      productName: ['', Validators.required],
+      revenue: ['', [Validators.required, Validators.min(0)]],
+      quantity: [1, [Validators.required, Validators.min(1)]],
+      month: ['', [Validators.required, Validators.min(1), Validators.max(12)]],
+      year: [2026, Validators.required]
+    });
+
+    this.editSaleForm = this.fb.group({
+      revenue: ['', [Validators.required, Validators.min(0)]],
+      quantity: [1, [Validators.required, Validators.min(1)]]
     });
   }
 
@@ -93,6 +114,9 @@ export class Dashboards implements OnInit, AfterViewInit {
     // render charts when user switches to the analytics tab
     if (tabName === 'analysis' && this.analyticsData) {
       setTimeout(() => this.renderCharts(), 50);
+    }
+    if (tabName === 'sales') {
+      this.fetchSales();
     }
   }
 
@@ -150,20 +174,7 @@ export class Dashboards implements OnInit, AfterViewInit {
   fetchRecentUsers() {
     this.http.get("http://localhost:5000/api/users/recent", { withCredentials: true }).subscribe({
       next: (res: any) => {
-        // dummy professional CRM stages to inject for visual flair
-        const stages = [
-          { badge: "New Lead", className: "crm-lead" },
-          { badge: "Contacted", className: "crm-contacted" },
-          { badge: "Qualified", className: "crm-qualified" },
-          { badge: "Active", className: "crm-active" }
-        ];
-
-        this.recentUsers = res.recentUsers.map((u: any, i: number) => ({
-          ...u,
-          crmStage: stages[i % stages.length].badge,
-          crmClassName: stages[i % stages.length].className
-        }));
-
+        this.recentUsers = res.recentUsers;
         this.cdr.detectChanges();
       }
     });
@@ -318,4 +329,87 @@ export class Dashboards implements OnInit, AfterViewInit {
     }
 
   }
+
+  // --- SALES METHODS ---
+
+  fetchSales() {
+    this.http.get('http://localhost:5000/api/sales/allsales', { withCredentials: true }).subscribe({
+      next: (res: any) => {
+        this.salesList = res.allSales;
+      },
+      error: (err) => console.error(err)
+    });
+  }
+
+  openAddSaleModal() {
+    this.addSaleForm.reset({ quantity: 1, year: 2026 });
+    this.isAddSaleModalOpen = true;
+  }
+  closeAddSaleModal() {
+    this.isAddSaleModalOpen = false;
+  }
+
+  submitSale() {
+    if (this.addSaleForm.invalid) return;
+    const saleData = {
+      productName: this.addSaleForm.value.productName,
+      revenue: this.addSaleForm.value.revenue,
+      quantity: this.addSaleForm.value.quantity,
+      month: this.addSaleForm.value.month,
+      year: this.addSaleForm.value.year
+    };
+    this.http.post('http://localhost:5000/api/sales/addsales', saleData, { withCredentials: true }).subscribe({
+      next: () => {
+        alert("Sale Added Successfully");
+        this.closeAddSaleModal();
+        this.fetchSales();
+      },
+      error: (err) => alert("Error: " + (err.error?.message || "Could not add sale"))
+    });
+  }
+
+  openEditSaleModal(sale: any) {
+    this.selectedSale = sale;
+    this.editSaleForm.patchValue({
+      revenue: sale.revenue,
+      quantity: sale.quantity
+    });
+    this.isEditSaleModalOpen = true;
+  }
+  closeEditSaleModal() {
+    this.isEditSaleModalOpen = false;
+    this.selectedSale = null;
+  }
+
+  submitEditSale() {
+    if (this.editSaleForm.invalid) return;
+    const updatedData = {
+      productName: this.selectedSale.productName,
+      month: this.selectedSale.month,
+      year: this.selectedSale.year,
+      revenue: this.editSaleForm.value.revenue,
+      quantity: this.editSaleForm.value.quantity
+    };
+    this.http.put(`http://localhost:5000/api/sales/editsales/${this.selectedSale._id}`, updatedData, { withCredentials: true }).subscribe({
+      next: () => {
+        alert("Sale Updated Successfully");
+        this.closeEditSaleModal();
+        this.fetchSales();
+      },
+      error: (err) => alert("Error: " + (err.error?.message || "Could not edit sale"))
+    });
+  }
+
+  deleteSale(id: string) {
+    if (confirm("Are you sure you want to delete this sale data?")) {
+      this.http.delete(`http://localhost:5000/api/sales/deletesales/${id}`, { withCredentials: true }).subscribe({
+        next: () => {
+          alert("Sale Deleted Successfully");
+          this.fetchSales();
+        },
+        error: (err) => alert("Error: " + (err.error?.message || "Could not delete sale"))
+      });
+    }
+  }
+
 }

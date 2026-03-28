@@ -22,6 +22,12 @@
                         <i class="fa-solid fa-users"></i>
                         <span>Users</span>
                   </a>
+                  @if (role === 'Admin' || role === 'Super Admin') {
+                  <a class="nav-item" [class.active]="activeTab === 'sales'" (click)="switchTab('sales')">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <span>Sales</span>
+                  </a>
+                  }
                   <a class="nav-item" href="#">
                         <i class="fa-solid fa-gear"></i>
                         <span>Settings</span>
@@ -141,7 +147,7 @@
                                                 <th>Name</th>
                                                 <th>Email</th>
                                                 <th>Role</th>
-                                                <th>Stage</th>
+
                                           </tr>
                                     </thead>
                                     <tbody>
@@ -157,16 +163,12 @@
                                                 </td>
                                                 <td><span style="color: #64748b;">{{ user.email }}</span></td>
                                                 <td><span class="role-badge" [ngClass]="user.role.toLowerCase()">{{ user.role }}</span></td>
-                                                <td>
-                                                      <span class="crm-badge" [ngClass]="user.crmClassName">
-                                                            {{ user.crmStage }}
-                                                      </span>
-                                                </td>
+
                                           </tr>
                                           }
                                           @if (recentUsers.length === 0) {
                                           <tr>
-                                                <td colspan="4" style="text-align: center; color: #64748b; padding: 24px;">No recent users found.</td>
+                                                <td colspan="3" style="text-align: center; color: #64748b; padding: 24px;">No recent users found.</td>
                                           </tr>
                                           }
                                     </tbody>
@@ -325,6 +327,72 @@
                   </div>
 
                   }
+
+                  <!-- TAB 4: SALES MANAGEMENT -->
+                  @if (activeTab === 'sales') {
+                  <div id="header">
+                        <div style="display: flex; gap: 15px; align-items: center;">
+                              <h3>Sales Data Management</h3>
+                        </div>
+
+                        <!-- Add Sale Button for Admins -->
+                        @if (role === 'Admin' || role === 'Super Admin') {
+                        <button id="add-user" (click)="openAddSaleModal()">
+                              <i class="fa-solid fa-plus"></i> Add Sale
+                        </button>
+                        }
+                  </div>
+
+                  <div class="users-container" style="margin-top: 20px;">
+                        <div class="table-wrapper">
+                              <table class="users-table">
+                                    <thead>
+                                          <tr>
+                                                <th>Product Name</th>
+                                                <th>Revenue</th>
+                                                <th>Quantity</th>
+                                                <th>Month / Year</th>
+                                                @if (role === 'Admin' || role === 'Super Admin') {
+                                                <th>Actions</th>
+                                                }
+                                          </tr>
+                                    </thead>
+                                    <tbody>
+                                          @for (sale of salesList; track sale._id) {
+                                          <tr>
+                                                <td>
+                                                      <div class="user-cell">
+                                                            <div class="tiny-avatar">{{ sale.productName[0] | uppercase }}</div>
+                                                            {{ sale.productName }}
+                                                      </div>
+                                                </td>
+                                                <td>₹{{ sale.revenue }}</td>
+                                                <td>{{ sale.quantity }}</td>
+                                                <td>{{ sale.month }}/{{ sale.year }}</td>
+                                                @if (role === 'Admin' || role === 'Super Admin') {
+                                                <td style="display:flex;">
+                                                      <button class="action-btn edit" title="Edit Sale" (click)="openEditSaleModal(sale)">
+                                                            <i class="fa-solid fa-pen"></i>
+                                                      </button>
+                                                      @if (role === 'Super Admin') {
+                                                      <button class="action-btn delete" title="Delete Sale" (click)="deleteSale(sale._id)">
+                                                            <i class="fa-solid fa-trash"></i>
+                                                      </button>
+                                                      }
+                                                </td>
+                                                }
+                                          </tr>
+                                          } @empty {
+                                          <tr>
+                                                <td colspan="5" style="text-align: center; color: #94a3b8; padding: 20px;">No sales records found.</td>
+                                          </tr>
+                                          }
+                                    </tbody>
+                              </table>
+                        </div>
+                  </div>
+                  }
+
             </div>
 
       </div>
@@ -437,6 +505,89 @@
                   </div>
             </form>
 
+      </div>
+</div>
+}
+
+<!-- === SALES MODALS === -->
+
+@if(isAddSaleModalOpen) {
+<div class="modal-overlay" (click)="closeAddSaleModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                  <h2>Add New Sale</h2>
+                  <button class="close-btn" (click)="closeAddSaleModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <form [formGroup]="addSaleForm" (ngSubmit)="submitSale()" class="add-user-form">
+                  <div class="form-group">
+                        <label>Product Name</label>
+                        <input type="text" formControlName="productName" placeholder="Product name">
+                  </div>
+                  <div class="form-group">
+                        <label>Revenue</label>
+                        <input type="number" formControlName="revenue" placeholder="Revenue (e.g. 5000)">
+                  </div>
+                  <div class="form-group">
+                        <label>Quantity</label>
+                        <input type="number" formControlName="quantity" placeholder="Quantity">
+                  </div>
+                  <div class="form-group">
+                        <label>Month (1-12)</label>
+                        <input type="number" formControlName="month" placeholder="1" min="1" max="12">
+                  </div>
+                  <div class="form-group">
+                        <label>Year</label>
+                        <input type="number" formControlName="year" placeholder="2026">
+                  </div>
+
+                  <div class="modal-actions">
+                        <button type="button" class="cancel-btn" (click)="closeAddSaleModal()">Cancel</button>
+                        <button type="submit" class="submit-btn" [disabled]="addSaleForm.invalid">Add Sale</button>
+                  </div>
+            </form>
+      </div>
+</div>
+}
+
+@if(isEditSaleModalOpen) {
+<div class="modal-overlay" (click)="closeEditSaleModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                  <h2>Edit Sale</h2>
+                  <button class="close-btn" (click)="closeEditSaleModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <form [formGroup]="editSaleForm" (ngSubmit)="submitEditSale()" class="add-user-form">
+                  <!-- Read-Only Info -->
+                  <div class="form-group">
+                        <label>Product Name</label>
+                        <input type="text" [value]="selectedSale?.productName" disabled>
+                  </div>
+                  <div class="form-group">
+                        <label>Month</label>
+                        <input type="number" [value]="selectedSale?.month" disabled>
+                  </div>
+                  <div class="form-group">
+                        <label>Year</label>
+                        <input type="number" [value]="selectedSale?.year" disabled>
+                  </div>
+
+                  <!-- Editable Info -->
+                  <div class="form-group">
+                        <label>Revenue</label>
+                        <input type="number" formControlName="revenue" placeholder="Revenue">
+                  </div>
+                  <div class="form-group">
+                        <label>Quantity</label>
+                        <input type="number" formControlName="quantity" placeholder="Quantity">
+                  </div>
+
+                  <div class="modal-actions">
+                        <button type="button" class="cancel-btn" (click)="closeEditSaleModal()">Cancel</button>
+                        <button type="submit" class="submit-btn" [disabled]="editSaleForm.invalid">Update Sale</button>
+                  </div>
+            </form>
       </div>
 </div>
 }

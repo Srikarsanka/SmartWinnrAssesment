@@ -9,6 +9,10 @@ const addUserRoute = require("./routes/adduserroute");
 const editUserRoute = require("./routes/edituserroute");
 const deleteUserRoute = require("./routes/deleteuserroute");
 const analyticsRoute = require("./routes/analyticsroute");
+const getSalesRoute = require("./routes/getSalesroute");
+const addSalesRoute = require("./routes/addSalesroute");
+const editSalesRoute = require("./routes/editSalesroute");
+const deleteSalesRoute = require("./routes/deletesales");
 
 
 dotenv.config();
@@ -30,6 +34,12 @@ app.use("/api/user", addUserRoute); // add new user
 app.use("/api/user", editUserRoute); // edit a user
 app.use("/api/user", deleteUserRoute); // delete a user
 app.use("/api/analytics", analyticsRoute); // analytics summary
+
+// Sales Routes
+app.use("/api/sales", getSalesRoute);
+app.use("/api/sales", addSalesRoute);
+app.use("/api/sales", editSalesRoute);
+app.use("/api/sales", deleteSalesRoute);
 // Env variables
 const port = process.env.PORT || 5000;
 const mongoUrl = process.env.MONGO_URI;
