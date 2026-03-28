@@ -77,14 +77,14 @@ export class Dashboards implements OnInit, AfterViewInit {
     this.addSaleForm = this.fb.group({
       productName: ['', Validators.required],
       revenue: ['', [Validators.required, Validators.min(0)]],
-      quantity: [1, [Validators.required, Validators.min(1)]],
+      quantity: ['', [Validators.required, Validators.min(1)]],
       month: ['', [Validators.required, Validators.min(1), Validators.max(12)]],
       year: [2026, Validators.required]
     });
 
     this.editSaleForm = this.fb.group({
       revenue: ['', [Validators.required, Validators.min(0)]],
-      quantity: [1, [Validators.required, Validators.min(1)]]
+      quantity: ["", [Validators.required, Validators.min(1)]]
     });
   }
 
@@ -270,18 +270,40 @@ export class Dashboards implements OnInit, AfterViewInit {
     const revenueCanvas = document.getElementById("revenueChart") as HTMLCanvasElement;
     if (revenueCanvas) {
       if (this.revenueChart) this.revenueChart.destroy();
+
+      // Process salesData from backend into Chart.js format
+      const salesData = this.analyticsData.salesData || [];
+      const monthsArray = ["Jan", "Feb", "Mar",];
+
+      const productsMap: any = {};
+      salesData.forEach((sale: any) => {
+        const name = sale._id.productName;
+        if (!productsMap[name]) {
+          productsMap[name] = new Array(12).fill(0);
+        }
+        const monthIndex = sale._id.month - 1;
+        if (monthIndex >= 0 && monthIndex < 12) {
+          productsMap[name][monthIndex] += sale.totalRevenue;
+        }
+      });
+
+      let products = Object.keys(productsMap).map(name => ({
+        name,
+        revenue: productsMap[name]
+      }));
+
       this.revenueChart = new Chart(revenueCanvas, {
         type: "line",
         data: {
-          labels: this.analyticsData.months,
-          datasets: this.analyticsData.products.map((p: any, i: number) => ({
+          labels: monthsArray,
+          datasets: products.map((p: any, i: number) => ({
             label: p.name,
             data: p.revenue,
-            borderColor: lineColors[i],
-            backgroundColor: lineColorsFill[i],
+            borderColor: lineColors[i % lineColors.length],
+            backgroundColor: lineColorsFill[i % lineColorsFill.length],
             fill: true,
             borderWidth: 2.5,
-            pointBackgroundColor: lineColors[i],
+            pointBackgroundColor: lineColors[i % lineColors.length],
             pointRadius: 4,
             tension: 0.4,
           }))
