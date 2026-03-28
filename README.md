@@ -68,7 +68,7 @@ SCREENSHORTS
 
  1.DASHBOARD TAB
  -----------
- <img src="https://res.cloudinary.com/djha4r2ys/image/upload/v1774632764/Screenshot_2026-03-27_230151_jecprv.png">
+ <img src="https://res.cloudinary.com/djha4r2ys/image/upload/v1774677597/dashboard_kagaqu.png">
 
  2.ANALYSIS TAB
  ----------------
