@@ -73,7 +73,7 @@ SCREENSHORTS
  2.ANALYSIS TAB
  ----------------
 
- <img src="https://res.cloudinary.com/djha4r2ys/image/upload/v1774633521/analysis_j6ngqe.png">
+ <img src="https://res.cloudinary.com/djha4r2ys/image/upload/v1774677702/analysis_jn0vy1.png">
 
  3.USERS TAB
  -------------
