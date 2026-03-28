@@ -1,4 +1,5 @@
 const users = require("../models/users");
+const Sales = require("../models/sales");
 
 const getAnalytics = async (req, res) => {
   try {
@@ -8,35 +9,36 @@ const getAnalytics = async (req, res) => {
     const superAdmins = await users.countDocuments({ role: "Super Admin" });
     const viewers = await users.countDocuments({ role: "Viewer" });
     
-    // new active/inactive sums for the dashboard
+    // active/inactive sums for the dashboard
     const active = await users.countDocuments({ isActive: { $ne: false } });
     const inactive = await users.countDocuments({ isActive: false });
 
-    // months for the x-axis
-    const months = ["Oct", "Nov", "Dec", "Jan", "Feb", "Mar"];
+    const currentYear = new Date().getFullYear();
 
-    // dummy revenue data for 3 SmartWinnr products over 6 months
-    const products = [
+    // Aggregate sales data for the current year directly in MongoDB
+    const salesData = await Sales.aggregate([
       {
-        name: "SmartWinnr Learn",
-        revenue: [18000, 22000, 25000, 20000, 30000, 35000],
+        $match: { year: currentYear }
       },
       {
-        name: "SmartWinnr Quiz",
-        revenue: [12000, 15000, 18000, 14000, 22000, 28000],
-      },
-      {
-        name: "SmartWinnr Coach",
-        revenue: [12000, 18000, 18000, 14000, 18000, 21000],
-      },
-    ];
+        $group: {
+          _id: {
+            month: "$month",
+            productName: "$productName"
+          },
+          totalRevenue: { $sum: "$revenue" }
+        }
+      }
+    ]);
+
+    
 
     return res.status(200).json({
       userStats: { total, admins, superAdmins, viewers, active, inactive },
-      months,
-      products,
+      salesData
     });
   } catch (err) {
+    console.error(err);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
