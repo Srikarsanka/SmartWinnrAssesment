@@ -120,7 +120,6 @@ h2 {
 /* RIGHT SIDE — Layered dark-purple panel */
 #right {
       width: 50%;
-      /* Multi-stop mesh gradient for depth */
       background:
             radial-gradient(ellipse at top left, #6d28d9 0%, transparent 60%),
             radial-gradient(ellipse at bottom right, #4f46e5 0%, transparent 60%),
@@ -133,7 +132,7 @@ h2 {
       overflow: hidden;
 }
 
-/* Subtle decorative ring in background */
+
 #right::before {
       content: '';
       position: absolute;
@@ -146,27 +145,7 @@ h2 {
       pointer-events: none;
 }
 
-#right::after {
-      content: '';
-      position: absolute;
-      width: 220px;
-      height: 220px;
-      border-radius: 50%;
-      border: 1px solid rgba(255,255,255,0.05);
-      bottom: -40px;
-      left: -40px;
-      pointer-events: none;
-}
 
-.right-content {
-      display: flex;
-      flex-direction: column;
-      gap: 36px;
-      width: 100%;
-      max-width: 360px;
-      position: relative;
-      z-index: 1;
-}
 
 /* Badge pill */
 .badge {
@@ -286,7 +265,7 @@ h2 {
       color: rgba(255,255,255,0.4);
 }
 
-/* MOBILE */
+
 @media (max-width: 768px) {
       #login {
             flex-direction: column;
