@@ -126,7 +126,7 @@ export class Dashboards implements OnInit, AfterViewInit {
 
   closeModal() {
     this.isAddUserModalOpen = false;
-    this.addUserForm.reset({ role: 'Viewer', isActive: true }); // Reset form on close
+    this.addUserForm.reset({ role: 'Viewer', isActive: true });
   }
 
   submitUser() {
@@ -140,7 +140,7 @@ export class Dashboards implements OnInit, AfterViewInit {
       email: this.addUserForm.value.email,
       password: this.addUserForm.value.password,
       role: this.addUserForm.value.role,
-      isActive: true, // Force active upon creation
+      isActive: true,
     }
 
     this.http.post('http://localhost:5000/api/user/adduser', addUser, { withCredentials: true }
@@ -162,10 +162,10 @@ export class Dashboards implements OnInit, AfterViewInit {
   fetchUsers() {
     this.http.get("http://localhost:5000/api/users/allusers", { withCredentials: true }).subscribe({
       next: (res: any) => {
-        // The Node.js backend returns `allUsers`, not `data`
+    
         this.allusers = res.allUsers;
         this.filteredUsers = res.allUsers;
-        this.filterUsers(); // Re-apply any existing filters
+        this.filterUsers(); 
       }
     });
   }
